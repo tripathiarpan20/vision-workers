@@ -25,16 +25,19 @@ async def score_results(
 ) -> models.TaskResult:
 
     node_scores: Dict[int, float] = {}
-
-    if result.formatted_response is None:
-        logger.info(f"Got no formatted response. Axon scores: {node_scores}")
-        return models.TaskResult(node_scores=node_scores, timestamp=datetime.now())
-
-    logger.info("Checking scores with server...")
     func = _import_function(task_config.checking_function)
     if func is None:
         logger.exception(f"Could not import function {task_config.checking_function}")
         return models.TaskResult(node_scores=node_scores, timestamp=datetime.now())
+
+    if result.formatted_response is None:
+        logger.info(f"Got no formatted response. Checking if we get the same fail with the same status code")
+        base_score: float = await func(result, payload, task_config) # TODO : handle errors properly
+        node_scores[result.node_id] = base_score
+        logger.info(f"Got Axon scores: {node_scores}") 
+        return models.TaskResult(node_scores=node_scores, timestamp=datetime.now())
+
+    logger.info("Checking scores with server...")
     base_score: float = await func(result, payload, task_config) # TODO : handle errors properly
 
     if base_score is None:
