@@ -74,10 +74,10 @@ async def check_image_result(result: models.QueryResult, payload: dict, task_con
         miner_status_code = result.status_code
         _, vali_status_code = await query_endpoint_with_status(task_config.endpoint, payload, task_config.server_needed.value)
         logger.info(f"miner status code: {miner_status_code} - vali status code : {vali_status_code}")
-        if str(vali_status_code) == str(miner_status_code):
+        if str(vali_status_code)[0] == str(miner_status_code)[0]:
             return 1
         else:
-            return -10
+            return -1
 
     image_response_body = utility_models.ImageResponseBody(**result.formatted_response)
 
@@ -92,7 +92,7 @@ async def check_image_result(result: models.QueryResult, payload: dict, task_con
         return None
 
     if expected_image_response.is_nsfw != image_response_body.is_nsfw:
-        return -10
+        return -2
 
     else:
         return await _get_image_similarity(
