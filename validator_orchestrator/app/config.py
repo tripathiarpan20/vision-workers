@@ -21,13 +21,13 @@ shared_network = os.getenv("SHARED_NETWORK_NAME", DEFAULT_NETWORK_NAME)
 checking_server_configs: list[CheckingServerConfig] = [
     CheckingServerConfig(
         name=ServerType.LLM.value,
-        docker_image="vllm/vllm-openai:v0.8.3",
+        docker_image="vllm/vllm-openai:v0.8.5.post1",
         port=6919,
         volumes={
             "HF": "/app/cache",
         },
         env_vars={
-            "VLLM_USE_V1": "0",
+            "VLLM_USE_V1": "1",
             "HF_HOME": "/app/cache",
             "HF_HUB_CACHE": "/app/cache/hub"
         },

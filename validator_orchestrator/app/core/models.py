@@ -78,10 +78,13 @@ class Message(BaseModel):
     role: str
     content: str
 
+class LogitResponse(BaseModel):
+    text_token: str
+    logprob: float
 
 class MessageResponse(BaseModel):
     content: str
-    logprob: float
+    logits: LogitResponse
 
 
 class ChatRequestModel(BaseModel):
